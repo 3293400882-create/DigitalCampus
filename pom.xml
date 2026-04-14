@@ -82,6 +82,19 @@
             <artifactId>java-jwt</artifactId>
             <version>4.4.0</version>
         </dependency>
+
+        <!-- Json依赖  -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <!-- Unirest依赖  -->
+        <dependency>
+            <groupId>com.konghq</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>3.14.1</version> <!-- 请检查并使用最新版本 -->
+        </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

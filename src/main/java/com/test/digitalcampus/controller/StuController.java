@@ -1,13 +1,11 @@
 package com.test.digitalcampus.controller;
 
 
-import com.test.digitalcampus.pojo.Classroom;
-import com.test.digitalcampus.pojo.Course;
-import com.test.digitalcampus.pojo.Result;
-import com.test.digitalcampus.pojo.Student;
+import com.test.digitalcampus.pojo.*;
 import com.test.digitalcampus.service.StuService;
 
 import com.test.digitalcampus.utils.JwtUtil;
+import com.test.digitalcampus.utils.MinDistanceResult;
 import org.mybatis.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -15,6 +13,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
 import com.test.digitalcampus.mapper.StuMapper;
 
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,9 @@ public class StuController {
     private StringRedisTemplate stringRedisTemplate;
     @Autowired
     private  StuService stuService;
+
+    @Autowired
+    private MinDistanceResult minDistanceResult;
 
     @PostMapping("login")
     public Result login(String StuID, String Stupassword){
@@ -49,7 +51,6 @@ public class StuController {
                 ops.set(token,token,1, TimeUnit.DAYS);
                 return Result.success("登录成功",token);
             }
-
             return Result.error("密码错误，请重试");
 
         }
@@ -65,7 +66,7 @@ public class StuController {
          }
          return Result.success(courses);
     }
-    @PostMapping("classcourse")
+    @GetMapping("classcourse")
     public Result<List<Course>> getclassroomCourse(String building,String classroom) {
         List<Course> courses= stuService.getClassroomCourse(building,classroom);
         if(courses == null || courses.isEmpty()){
@@ -73,6 +74,35 @@ public class StuController {
         }
         return Result.success(courses);
     }
+    @GetMapping("classroom")// 建议将 WeekDay 改为 String 或 Integer，LocalTime 等基础类型无法传 null
+    public Result<List<Course>> getClassroom(String building,
+                                             LocalTime beginTime,
+                                             LocalTime endTime,
+                                             String weekDay) { // 参数改为小写开头符合规范，且允许为 null
+
+
+        System.out.println("weekDay = " + weekDay);
+        // 逻辑判断：如果时间或地点缺失，可能需要返回错误，或者根据业务需求调整
+        if (beginTime == null || endTime == null) {
+            return Result.error("时间参数不能为空");
+        }
+
+
+        List<Course> courses = stuService.getClassroom(building, beginTime, endTime, weekDay);
+
+        if (courses == null || courses.isEmpty()) {
+            return Result.error("暂无数据");
+        }
+        return Result.success(courses);
+    }
+    @PostMapping("/path")
+    public Result<PathResult> getPath(@RequestBody  List<PathRequest> nodes) {
+
+        PathResult pathResult = minDistanceResult.getPathResult(nodes);
+
+        return Result.success(pathResult);
+    }
+
 
 
 }

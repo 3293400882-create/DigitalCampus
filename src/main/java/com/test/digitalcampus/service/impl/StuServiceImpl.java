@@ -8,6 +8,7 @@ import com.test.digitalcampus.utils.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +37,14 @@ public class StuServiceImpl implements StuService {
     @Override
     public List<Course> getClassroomCourse(String building, String classroom) {
         List<Course>courses= stuMapper.getClassroomcourse(building,classroom);
+        return courses;
+    }
+
+    @Override
+    public List<Course> getClassroom(String building, LocalTime beginTime, LocalTime endTime, String weekDay) {
+        //System.out.println("weekDayserver = " + weekDay);
+        List<Course>courses= stuMapper.getClassroom(building,beginTime,endTime,weekDay);
+
         return courses;
     }
 }

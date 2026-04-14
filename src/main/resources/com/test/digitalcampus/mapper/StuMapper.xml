@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.digitalcampus.mapper.StuMapper">
+
+    <!-- 动态 SQL 查询 -->
+    <select id="getClassroom" resultType="com.test.digitalcampus.pojo.Course">
+        SELECT DISTINCT classroom, building, week_day
+        FROM course c1
+        WHERE building = #{building}
+        <if test="weekDay != null and weekDay != ''">
+            AND c1.week_day = #{weekDay}
+        </if>
+        AND NOT EXISTS (
+        SELECT 1
+        FROM course c2
+        WHERE
+         c2.classroom = c1.classroom
+        AND c2.begin_time &lt;= #{endTime}
+        AND c2.end_time &gt;= #{beginTime}
+
+        <!-- 动态判断：如果传入了 week 参数，则增加周次匹配条件 -->
+
+        )
+    </select>
+</mapper>

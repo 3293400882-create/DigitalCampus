@@ -28,7 +28,10 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         String redistoken = ops.get(token);
         if(redistoken==null){
-            throw new  RuntimeException();
+            //拦截
+            response.setStatus(401);
+            return false;
+            //throw new  RuntimeException();
         }
         //验证token
         try {
